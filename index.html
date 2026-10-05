@@ -120,13 +120,19 @@ const FONT='bold 72px "Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif';
 const RC={};
 function shape(ch){
  if(RC[ch])return RC[ch];
- const N=96,C=8,nn=N/C,c=document.createElement('canvas');c.width=c.height=N;
+ const N=96,C=4,nn=N/C,c=document.createElement('canvas');c.width=c.height=N;
  const g=c.getContext('2d',{willReadFrequently:true});
  g.font=FONT;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText(ch,N/2,N/2);
  const d=g.getImageData(0,0,N,N).data,out=[];let prev={};
+ // 内側の穴（口・田など）は外から届かない空きセルを塗りつぶして、外周だけの中身が詰まった形にする
+ const G=[];
+ for(let r=0;r<nn;r++){const row=[];for(let q=0;q<nn;q++){let a=0;for(let y=0;y<C;y++)for(let x=0;x<C;x++)a+=d[((r*C+y)*N+q*C+x)*4+3];row.push(a/(C*C*255)>.4)}G.push(row)}
+ const ext=G.map(r=>r.map(()=>false)),st=[];
+ for(let i=0;i<nn;i++)for(const [r,q] of [[0,i],[nn-1,i],[i,0],[i,nn-1]])if(!G[r][q]&&!ext[r][q]){ext[r][q]=true;st.push([r,q])}
+ while(st.length){const [r,q]=st.pop();for(const [dr,dq] of [[1,0],[-1,0],[0,1],[0,-1]]){const y=r+dr,x=q+dq;if(y>=0&&x>=0&&y<nn&&x<nn&&!G[y][x]&&!ext[y][x]){ext[y][x]=true;st.push([y,x])}}}
+ for(let r=0;r<nn;r++)for(let q=0;q<nn;q++)if(!ext[r][q])G[r][q]=true;
  for(let r=0;r<nn;r++){
-  const row=[];
-  for(let q=0;q<nn;q++){let a=0;for(let y=0;y<C;y++)for(let x=0;x<C;x++)a+=d[((r*C+y)*N+q*C+x)*4+3];row.push(a/(C*C*255)>.35)}
+  const row=G[r];
   const cu={};
   for(let q=0;q<nn;){
    if(!row[q]){q++;continue}
@@ -139,7 +145,7 @@ function shape(ch){
  if(!out.length){RC[ch]=[[0,0,40,40]];RC[ch].empty=true}
  return RC[ch]}
 function make(ch){
- const ps=shape(ch).map(([x,y,w,h])=>Bodies.rectangle(x,y,w,h,{friction:.8,frictionStatic:1,restitution:0,slop:.02}));
+ const ps=shape(ch).map(([x,y,w,h])=>Bodies.rectangle(x,y,w+1,h+1,{friction:.8,frictionStatic:1,restitution:0,slop:.02}));
  const b=Body.create({parts:ps,frictionAir:.02,sleepThreshold:30});
  return {b,off:{x:-b.position.x,y:-b.position.y},ch}}
 function addPiece(o,ch,x,y){const p=make(ch);p.owner=o;
@@ -149,7 +155,7 @@ function addPiece(o,ch,x,y){const p=make(ch);p.owner=o;
 function startGame(){
  show('game');
  eng=Engine.create({positionIterations:14,velocityIterations:10,enableSleeping:true});eng.gravity.y=1;
- Composite.add(eng.world,Bodies.rectangle(W/2,PY+10,180,20,{isStatic:true,friction:.9}));
+ Composite.add(eng.world,Bodies.rectangle(W/2,PY+50,180,100,{isStatic:true,friction:.9}));
  pieces=[];n=0;h=0;camY=0;camT=0;phase='ready';px=W/2;cur=mode==='online'?round%2:0;
  $('res').classList.remove('on');$('again').disabled=false;
  updBars();
@@ -286,12 +292,15 @@ function onEnd(m){
  const l=(m.data||{}).l;if(l!==0&&l!==1)return;finish(l)}
 
 function step(){
- Engine.update(eng,1000/60);
+ for(let i=0;i<2;i++){Engine.update(eng,1000/120);
+  for(const p of pieces){const b=p.b,v=b.velocity,sp=Math.hypot(v.x,v.y);
+   if(sp>4)Body.setVelocity(b,{x:v.x*4/sp,y:v.y*4/sp});
+   if(Math.abs(b.angularVelocity)>.15)Body.setAngularVelocity(b,Math.sign(b.angularVelocity)*.15)}}
  if(phase==='drop'){
   fr++;
   if(mine()){
    if(pieces.some(p=>p.b.position.y>PY+90||p.b.position.x<-40||p.b.position.x>W+40)){fail();return}
-   const mv=pieces.some(p=>p.b.speed>.25||Math.abs(p.b.angularSpeed)>.012);
+   const mv=pieces.some(p=>p.b.speed>.125||Math.abs(p.b.angularSpeed)>.006);
    still=mv?0:still+1;
    if((fr>40&&still>30)||fr>900)nextTurn()}}
  if(phase==='aim'||phase==='wait')camY+=(camT-camY)*.06}
