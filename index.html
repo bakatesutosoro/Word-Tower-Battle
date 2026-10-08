@@ -1,47 +1,78 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>文字バランス対戦</title>
+<title>モジつみ｜文字をつんで遊ぶ、ぐらぐらバランスゲーム</title>
+<meta name="description" content="好きな文字（漢字・ひらがな・絵文字もOK）をつんで、高さや画数を競うバランスゲーム。ブラウザですぐ遊べて、オンラインで1対1の対戦もできます。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="モジつみ">
+<meta property="og:description" content="文字をつんで、ぐらぐらバトル！ブラウザで遊べる文字つみあげゲーム。">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#fff3c4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧱%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@500;700&display=swap">
 <style>
-:root{--bg:#f4efe4;--ink:#1d1b18;--sub:#7a7468;--acc:#c0392b;--card:#fffdf7;--p1:#2c6e9b;--p2:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a17;--ink:#f1ece1;--sub:#a29b8d;--card:#2a2723}}
-:root[data-theme="dark"]{--bg:#1c1a17;--ink:#f1ece1;--sub:#a29b8d;--card:#2a2723}
+:root{--bg:#fff3c4;--ink:#3a2a55;--sub:#7b6a8f;--card:#fff;--p1:#2f9bff;--p2:#ff5c7a;--grn:#2fc27a;--yel:#ffc233;--pur:#9b6bff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:'Noto Serif JP','Hiragino Mincho ProN','Yu Mincho',serif;user-select:none;-webkit-user-select:none;touch-action:none}
+body{background:radial-gradient(circle at 15% 8%,#ffd9ec 0,transparent 42%),radial-gradient(circle at 88% 85%,#cfeeff 0,transparent 46%),var(--bg);color:var(--ink);font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','Yu Gothic','Meiryo',sans-serif;font-weight:700;user-select:none;-webkit-user-select:none;touch-action:none}
 #app{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.scr{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:16px}
+.scr{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:16px;position:relative}
 .scr.on{display:flex}
-h1{font-size:clamp(34px,9vw,56px);margin:0;letter-spacing:.1em}
-button{font:inherit;font-size:18px;padding:12px 28px;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:10px;cursor:pointer;min-width:200px}
-button.pri{background:var(--ink);color:var(--bg)}
-button:disabled{opacity:.35}
+button{font:inherit;font-size:18px;padding:12px 26px;border:3px solid var(--ink);background:#fff;color:var(--ink);border-radius:18px;cursor:pointer;min-width:200px;box-shadow:0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+button:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+button.pri{background:var(--yel)}
+button:disabled{opacity:.4;box-shadow:0 2px 0 var(--ink)}
+#single{background:#4cc9f0}#stroke{background:var(--pur);color:#fff}#online{background:var(--p2);color:#fff}#dnext{background:var(--grn);color:#fff}
 .sub{color:var(--sub);font-size:14px}
+#title{width:100%;height:100%;overflow:hidden;gap:12px}
+#title>*:not(.bg){position:relative;z-index:1}
+#title .bg span{position:absolute;font-size:84px;opacity:.2;font-family:'Mochiy Pop One',sans-serif;animation:fl 6s ease-in-out infinite alternate}
+#title .bg span:nth-child(1){left:5%;top:7%;color:var(--p2)}#title .bg span:nth-child(2){right:7%;top:12%;color:var(--p1);animation-delay:-1s}
+#title .bg span:nth-child(3){left:10%;top:38%;color:var(--grn);animation-delay:-2s}#title .bg span:nth-child(4){right:6%;top:42%;color:var(--yel);animation-delay:-3s}
+#title .bg span:nth-child(5){left:4%;bottom:12%;color:var(--pur);animation-delay:-4s}#title .bg span:nth-child(6){right:9%;bottom:9%;color:var(--p2);animation-delay:-5s}
+@keyframes fl{from{transform:translateY(-12px) rotate(-8deg)}to{transform:translateY(12px) rotate(8deg)}}
+h1{font-family:'Mochiy Pop One','Zen Maru Gothic',sans-serif;font-weight:400;font-size:clamp(64px,19vw,104px);margin:0 0 -4px;line-height:1.05;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 6px 0 rgba(58,42,85,.28)}
+h1 span{display:inline-block;animation:bn 1.8s ease-in-out infinite}
+h1 span:nth-child(1){color:var(--p2);transform:rotate(-7deg)}h1 span:nth-child(2){color:var(--p1);animation-delay:.15s}
+h1 span:nth-child(3){color:var(--grn);animation-delay:.3s;transform:rotate(6deg)}h1 span:nth-child(4){color:#ff9a1f;animation-delay:.45s}
+@keyframes bn{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.tag{font-size:clamp(17px,4.6vw,22px);color:var(--ink);margin-bottom:6px}
+#title button{width:min(86vw,340px)}
+.how{background:rgba(255,255,255,.75);border-radius:16px;padding:10px 16px;font-size:13px;line-height:1.7;color:var(--sub);max-width:min(86vw,340px)}
+.credit{font-size:11px;color:var(--sub);opacity:.85}.credit a{color:inherit}
 #grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-#grid button{min-width:0;font-size:32px;padding:10px 0;width:clamp(52px,16vw,72px)}
-#grid button.sel{background:var(--ink);color:var(--bg)}
+#grid button{min-width:0;font-size:30px;padding:8px 0;width:clamp(52px,16vw,72px);box-shadow:0 4px 0 var(--ink)}
+#grid button.sel{background:var(--p1);color:#fff}
 #pick{display:flex;gap:8px;min-height:68px;align-items:center;justify-content:center}
-input{user-select:text;-webkit-user-select:text;font:inherit;font-size:20px;padding:10px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:150px;text-align:center}
+input{user-select:text;-webkit-user-select:text;font:inherit;font-size:20px;padding:10px;border:3px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink);width:150px;text-align:center}
 #game{width:100%;height:100%;flex-direction:column;justify-content:space-between;gap:0;padding:6px 0}
-.bar{display:flex;align-items:center;gap:12px;justify-content:center;padding:6px 14px;border-radius:10px;width:min(92vw,420px);box-sizing:border-box;border:2px solid transparent;opacity:.45}
-.bar.act{opacity:1;border-color:currentColor}
-.bar b{font-size:16px}.bar .k{font-size:38px;line-height:1;min-width:46px}
+.bar{display:flex;align-items:center;gap:12px;justify-content:center;padding:6px 14px;border-radius:16px;width:min(92vw,420px);box-sizing:border-box;border:3px solid transparent;background:rgba(255,255,255,.8);opacity:.55}
+.bar.act{opacity:1;border-color:currentColor;box-shadow:0 4px 0 currentColor;background:#fff}
+.bar b{font-size:16px}.bar .nx{font-size:15px;opacity:.85;white-space:nowrap}
+.bar .k{font-size:38px;line-height:1;min-width:46px}
 #b1{color:var(--p1)}#b2{color:var(--p2)}
-canvas{width:min(96vw,calc((100vh - 150px)*.667));aspect-ratio:360/540;background:var(--card);border-radius:10px;touch-action:none}
-#ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:clamp(48px,14vw,96px);background:rgba(0,0,0,.35);color:#fff;pointer-events:none;font-weight:700}
+#rot{display:flex;gap:18px;padding:2px 0}
+#rot button{touch-action:none;min-width:0;font-size:24px;padding:2px 26px;box-shadow:0 3px 0 var(--ink);background:var(--yel)}
+canvas{width:min(96vw,calc((100vh - 195px)*.667));aspect-ratio:360/540;background:linear-gradient(#bfeaff 0%,#e8f7ff 55%,#fff1c9 100%);border:3px solid var(--ink);border-radius:20px;touch-action:none;box-sizing:border-box}
+#ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:'Mochiy Pop One',sans-serif;font-size:clamp(52px,15vw,100px);background:rgba(155,107,255,.45);color:#fff;pointer-events:none;text-shadow:0 6px 0 rgba(58,42,85,.4)}
 #ov.on{display:flex}
 #res{position:absolute;inset:0;background:var(--bg);display:none}
 #res.on{display:flex}
-#res .big{font-size:clamp(56px,16vw,110px);font-weight:700;margin:0}
+#res .big{font-family:'Mochiy Pop One',sans-serif;font-weight:400;font-size:clamp(56px,16vw,110px);margin:0;-webkit-text-stroke:6px #fff;paint-order:stroke fill}
 </style></head><body>
 <div id="app">
  <div class="scr on" id="title">
-  <h1>文字バランス対戦</h1>
-  <div class="sub">好きな文字を積んで、バランスを取ろう</div>
-  <button class="pri" id="single">シングル（どこまで高く積める？）</button>
-  <button class="pri" id="online">オンライン対戦</button>
-  <div class="sub">オンラインは、同じページを開いている相手とマッチングします</div>
+  <div class="bg" aria-hidden="true"><span>山</span><span>木</span><span>日</span><span>月</span><span>火</span><span>水</span></div>
+  <h1 aria-label="モジつみ"><span>モ</span><span>ジ</span><span>つ</span><span>み</span></h1>
+  <div class="tag">文字をつんで、ぐらぐらバトル！</div>
+  <button id="single">シングル：どこまで高く？</button>
+  <button id="stroke">シングル：画数スコア</button>
+  <button id="online">オンライン対戦</button>
+  <div class="how">① ドラッグで位置を決める　② ↺↻を長押しで回転<br>③ 離すと落下！　先にタワーを崩したほうが負け<br>好きな文字（絵文字もOK）を3つ選んで挑戦しよう</div>
+  <div class="credit">画数データ：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener">KanjiVG</a>（CC BY-SA 3.0）</div>
  </div>
- <div class="scr" id="deck">
+ 
+<div class="scr" id="deck">
   <div id="dtitle" style="font-size:22px"></div>
   <div class="sub">3つの文字を選ぶ（同じ字は不可）。好きな文字は何でも入力できます（絵文字もOK）</div>
   <div id="pick"></div>
@@ -58,7 +89,8 @@ canvas{width:min(96vw,calc((100vh - 150px)*.667));aspect-ratio:360/540;backgroun
  <div class="scr" id="game">
   <div class="bar" id="b1"><b>プレイヤー1</b><span class="k"></span><span class="t"></span></div>
   <canvas id="cv"></canvas>
-  <div class="bar" id="b2"><b>プレイヤー2</b><span class="k"></span><span class="t"></span></div>
+  <div id="rot"><button id="rl" disabled>↺</button><button id="rr" disabled>↻</button></div>
+  <div class="bar" id="b2"><b>プレイヤー2</b><span class="k"></span><span class="t"></span><span class="nx"></span></div>
  </div>
  <div class="scr" id="res">
   <p class="big" id="rt"></p>
@@ -74,27 +106,31 @@ canvas{width:min(96vw,calc((100vh - 150px)*.667));aspect-ratio:360/540;backgroun
 <script>
 const {Engine,Bodies,Body,Composite}=Matter;
 const ALL=['一','十','人','口','山','木','日','月','火','水'];
+// 画数表（KanjiVG由来の漢字・かな約6600字）。表にない字（絵文字・記号・英数字など）は強制的に1画
+const STK={};'1:くしそっつてのひへるろゐゑん゜ゝノフヘレ・ーヽ一丨丶丿乙亅|2:ぃいぅうぇえこすちとぬねぴぺみめゅゆょよらりれゎわ゛ァアィイカクコスセソトナニヌハヒプペマムメャヤュユラリルヮワンヵ㔾丁七乂乃九了二亠人亻儿入八冂冖冫几凵刀刂力勹匕匚匸十卜卩厂厶又𠂊𠆢|3:ぁあぉおかぐけさじせぞづでにはびべまむもゃやをゕゖゞゥウェエォオキケサシタチッツテパピブベミモョヨロヱヲヶヾ万丈三上下与个丸久之乞也于亡兀凡刃刄勺千叉及口囗土士夂夊夕大女子孑宀寸小尢尸屮山巛川工己已巳巾干幺广廴廾弋弓彐彑彡彳忄扌才氵犭艹阝|4:きごずたぢどなぱふほゔガグゴズゼゾドネバビホヰヷ㓁不丐丑中丹乏乢予云互五井亢什仁仂仄仆仇今介仍从仏允元公六兮内円冗凶分切刈勾勿匀匁匂化匹区卅卆升午卞厄友双反収壬天太夫夬夭孔少尤尹尺屯巴幻廿弌弔引弖心戈戸手扎支攴攵文斗斤方无旡日曰月木欠止歹殳毋比毛氏气水火灬爪父爻爿片牙牛犬王礻耂辶|5:がげざぜばぷぽギゲザジダヂヅデポヴヹヺ且丕世丗丘丙丱主丼乍乎仔仕他仗付仙仝仞仟代令以仭兄冉冊册写冬処凧凸凹出刊刋功加包匆北匝卉半占卮卯去古句叨叩只召叭叮可台叱史右叶号司叺囘囚四圣圦圧外夘央失夲奴孕它尓尻尼屶左巧巨市布平幼庁広弁弍弗弘必戉戊打払斥旦旧未末本札朮正母民氷永氺氾汀汁犯玄玉瓦甘生用田由甲申疋疒癶白皮皿目矛矢石示礼禸禾穴立罒艾衤辷辺込令𠮟|6:ぎだぶぼボヸ丞両争亘亙交亥亦仮仰仲件价任企伉伊伍伎伏伐休会伜伝充兆兇先光全共关再冰冱冲决凩凪刎刑刔列劣匈匠匡卍印危叫吁吃各合吉吊吋同名后吏吐向吸回因団在圭地圷圸壮夙多夛夷夸奸好妁如妃妄字存宅宇守安寺尖尽屹州巡帆年幵并庄式弐弛当忖忙戌戍戎成托扛扞扠扣扨扱收攷旨早旬旭曲曳有朱朴朶朷朸机朽朿杁次此死毎気汎汐汕汗汚汝江池汢灯灰牝牟犲瓜百竹米糸缶网羊羽老考而耒耳聿肉肋肌自至臼舌舛舟艮色艸芋芍芒芝虍虫血行衣襾西赱辻迅阡𠂤|7:㐬串乕乱亊亜亨伯估伴伶伸伺似伽佃但佇位低住佐佑体何佗余佚佛作佝佞克兌兎児兵冏冴况冶冷初判別刧利刪助努劫劬劭励労匣医即却卵君吝吞吟吠否吩含听吭吮吶吹吻吼吽吾呀呂呆呈呉告呎呑囮困囲図圻址坂均坊坎坏坐坑壯声壱売夾妊妍妓妖妙妛妝妣妥妨孚孛孜孝宋完宍宏対寿尨尾尿局屁岌岐岑岔巫巵帋希庇床序廷弃弄弟形彷役忌忍志忘応忤快忰忱忸忻我戒戻扮扶批扼找技抂抃抄抉把抑抒抓抔投抖抗折抛抜択攸改攻斈旱更曵杆杉李杏材村杓杖杙杜杞束杠条杢杣杤来求汞汨汪汰汲汳決汽汾沁沂沃沈沌沍沐沒沖沙沚沛没沢泛灸灼災牡牢状犹狂狃狄狆玖瓧甫甬男甸町甼疔皀皃矣社禿秀私究竍糺系罕肓肖肘肚肛肝臣良芙芟芥芦芫芬芭芯花芳芸芹苅見角言谷豆豕豸貝赤走足身車辛辰辿迂迄迎近返邑那邦邨酉釆里阨阪阮阯防麦冷𦥑|8:並乖乳事些亞亟享京佩佯佰佳併佶佻佼使侃來侈例侍侏侑侖侘供依侠価侫侭侮免兒兔兩其具典冐冽凭函刮到刳制刷券刹刺刻劵効劼劾卒卓協卦卷参叔取受呟周呪呰味呵呶呷呻呼命咀咄咆咋和咎咏咐咒囹固国坡坤坦坩坪坿垂垈垉夜奄奇奈奉奔妬妲妹妻妾姆姉始姐姑姓委孟季孥学宕宗官宙定宛宜宝実尚尭居屆屈届岡岨岩岫岬岱岳岶岷岸岻岼岾峅帑帖帙帚帛幸底庖店庚府延廸弥弦弩彼彿往征徂徃径忝忠念忽忿怏怐怕怖怙怛怜怡怦性怩怪怫怯怺戔或房所承披抬抱抵抹抻押抽拂担拆拇拈拉拊拌拍拐拑拒拓拔拗拘拙招拝拠拡放斉斧於旺旻昂昃昆昇昊昌明昏易昔朋服杪杭杯杰東杲杳杵杷杼松板枅枇枉枋枌析枕林枚果枝枠枡枢枦枩欣欧武歩歿殀殴毒毟氓氛沓沫沮沱河沸油沺治沼沽沾沿況泄泅泊泌泓法泗泙泝泡波泣泥注泪泯泱泳炉炊炎炒炙爬爭牀版牧物狎狒狗狙狛玩瓩画畄疚疝的盂盲直知矼祀祁祈祉秉穹空突竏竺籵罔羌者股肢肥肩肪肬肭肯肱育肴舍舎芽苑苒苓苔苗苙苛苜苞苟苡苣若苦苧苫英苳苴苹苺苻茂范茄茅茆茉茎虎虱表衫軋迚迩迪迫迭述邪邯邱邵邸采金長門阜阻阿陀陂附隶隹雨青非飠鼡|9:乗亭亮亰侯侵侶便係促俄俊俎俐俑俔俗俘俚俛保俟信俣俤俥兪冑冒冠凾剃剄則削剋剌前剏勁勃勅勇匍卑南単卸卻厖厘厚叙叛呱咢咤咥咨咫咬咯咲咳咸咼咽咾哀品哂哄哇哈哉哘囿圀型垓垠垢垣垤垪垰垳城変复奎奏奐契奕姙姚姜姥姦姨姪姶姻姿威娃孤孩客宣室宥封専屋屍屎屏峇峙峠峡巷巻帝帥幽庠度建廻廼弧弭弯彖彦待徇很徊律後怎怒思怠急怨怱恂恃恆恊恍恒恟恠恢恤恨恪恫恬恰悔扁拏拜括拭拮拯拱拵拶拷拾持挂指按挌挑挟挧政故斫施斿昜星映春昧昨昭是昴昵昶昼昿曷朏枯枳枴架枷枸枹柁柄柆柊柎柏某柑染柔柘柚柝柞柢柤柩柬柮柯柱柳柵査柾柿栂栃栄歪殃殄殆段毘泉洋洌洒洗洙洛洞洟津洩洪洫洲洳洵洶洸活洽派浄浅海炬炭炮炯炳炸点為爰爼牲牴狐狠狡狢狩独狭玲玳玻珀珂珈珊珍珎瓮瓰瓱瓲甚畆畉畊畋界畍畏畐畑疣疥疫癸発皆皇皈盃盆盈相盻盾省眄眇眈眉看県矜矧砂砌砒研砕祇祐祖祝神祢禹禺秋科秒秕穽穿窃竒竓竕竿笂籾粁粂糾紀紂約紅紆級缸罘美耐耶肺胃胄胆背胎胖胙胚胛胝胞胡胤胥脉臥臭臾舁茖茗茘茜茨茫茯茱茲茴茵茶茸茹荀荅草荊荏荐荒荘莽虐虹虻衂衍衲衵衷衽衿袂要訂訃計貞負赴軌軍迢迥迦迯迷追退送逃逆郁郊郎酊酋重閂陋陌陏限面革韭音頁風飛食首香鳬玲|10:乘亳修俯俱俳俵俶俸俺俾倅倆倉個倍們倒倔倖候倚借倡倣値倥倦倨倩倪倫倬倭倶倹党兼冓冢冤冥冦凄凅准凉凋凌凍剔剖剛剝剞剣剤剥勉勍匪匿原叟員哢哥哦哨哩哭哮哲哺哽唄唆唇唏唐唔唖唳啄圃圄埀埃埆埋埒埓埔埖夏套奘奚姫娉娑娘娚娜娟娠娥娩娯孫宦宮宰害宴宵家宸容尃射尅将屐屑屓展峨峩峪峭峯峰島峺峻峽崋差師席帯帰座庫庭弉弱徐徑徒従恁恋恐恕恙恚恣恥恩恭息恵恷悁悃悄悋悌悍悒悖悗悚悛悟悦悧悩扇拳拿挈挙挨挫振挺挽挾挿捉捌捍捏捐捕捗捜捩效敏料旁旃旄旅旆既晁時晃晄晉晋晏晒晟書朔朕朗柧柴栓栖栗栞校栢栩株栫栲栴核根格栽桁桂桃框案桍桎桐桑桓桔桙桜桟档桧梅殉殊残殷殺氣氤泰流浙浚浜浣浤浦浩浪浬浮浴浸浹涅消涌涎涓涕涙涛涜烈烋烏烙烝烟特狷狸狹狼狽珞珠珥珪班珮珱畔留畚畛畜畝畠疱疲疳疸疹疼疽疾痂痃病症皋皰益盍眛眞真眠眤眩矩砠砥砧砲破砺砿祓祕祗祚祟祠祥离秘租秡秣秤秦秧秩秬称窄窈站竚竜竝笄笆笈笊笋笏笑粃粉粋粍粐紊紋納紐純紕紗紘紙紛紜素紡索缺罟罠羔翁翅翆耄耆耕耗耘耙耻耽耿胯胱胴胸胼能脂脅脆脇脈脊致舐舩航舫般舮芻茣荳荵荷荻荼莅莇莉莊莎莓莖莚莞莟莠莢莨莪莫莱莵華虔蚊蚋蚌蚓蚕蚣蚤蚩蚪衄衰衾袁袍袒袖袗袙袢被袮訊訌討訐訓訖託記豈豹豺財貢赳起躬軒辱迴迸迹迺逅透逐逓途通逝速造連郛郡郢郤酌配酎酒釖釘釛釜針釟釡閃降陛陜陝陞陟院陣除陥陦隻隼韋飢馬骨高髟鬥鬯鬲鬼|11:乾亀倏偃假偈偏偐偕偖做停健偬偲側偵偶偸偽兜冕冨凰剪副剰剱剳勒動勗勘務匏匐匙區厠參售唯唱唸唹唾啀啅商啌問啓啖啗啜啝喝圈圉國埜域埠埣埴埵埶執培基埼堀堂堆堊堋壷娵娶娼婀婁婆婉婚婢婦婪婬孰宿寂寃寄寅密寇寉將專尉崇崎崑崔崕崖崗崘崙崚崛崟崢崩巣帳帶帷常庵庶康庸張強弸彗彩彪彫彬得徘徙從徠悉悠患悪悴悵悸悼悽情惆惇惓惘惚惜惟惧惨戚戛戝扈捧捨捫据捲捶捷捺捻掀掃授掉掎掏排掖掘掛掟掠採探接控推掩措掫掬掲掴掵掻描敍救敕敖敗敘教斎斛斜斬断旋旌族晝晞晢晤晦晧晨曹曼曽朖望桀桝桴桶桷桼桾桿梁梃梍梏梓梔梗梛條梟梠梢梦梧梨梭梯械梱梳梵梶梹梺梼椛欲欷欸殍殻毫毬涯液涵涸涼淀淅淆淇淋淌淑淒淕淘淙淞淡淤淦淨淪淫淬淮深淳混淹淺添清渇済渉渊渋渓渕渚渮烱烹烽焉焔爽牽牾犁猊猖猗猛猜猝猟猪猫率珸現球琅理琉琢瓶瓷瓸甜産畢畤略畦畧畩異疵痊痍痒痔痕皎皐盒盖盗盛眥眦眷眸眺眼砦硅票祭祷移窒窓窕竟章竡笘笙笛笞笠笥符笨第笳笵笶笹粒粕粗粘粛紬紮累細紲紳紵紹紺紿終絃組絅絆絋経罣羚羝羞翊翌習耜聆聊脚脛脣脩脯脱脳舂舳舵舶舷舸船菁菅菊菌菎菓菖菘菜菠菩菫菱菲菴菷菻菽萃萄萇萊萋萌萍萎萓萠萢著處虚蚫蚯蚰蚶蛄蛆蛇蛉蛋蛍蛎衒術袈袋袞袤袰袱袴袵袷袿裃裄規覓視訛訝訟訣訥訪設許訳谺豚豼貧貨販貪貫責貭貮貶赦趺趾跂躯軛軟転軣逋逍逎逑逕逖逗這逞逡逢逧逮週進逸部郭郵郷都酔酖酘釈野釣釦釧釵釶釼閇閉閊陪陬陰陲陳陵陶陷陸険隆雀雩雪雫頂頃馗魚鳥鹵鹿麥麸麻黄黒羚聆|12:偉傀傅傍傘備傚凖凱剩割剴創勝勞募勤博卿厥厦厨啣啻啼啾喀喃善喇喉喊喋喘喙喚喜喞喟喧喨喩喪喫喬單喰営喻圍圏堅堕堙堝堡堤堪堯堰報場堵堺堽塀塁塔塚壹壺壻奠奢奥婿媒媚媛嫂孱孳富寐寒寓寔尊尋就属屠屡嵋嵌嵎嵐嵒嵜巽帽幀幃幄幅幇幾廁廂廃廊弑弼弾彭御徨復循悲悳悶惑惠惡惣惰惱惴惶惹惺惻愀愃愉愎愕愡慌戞戟戠扉掌掣掾揀揃揄揆揉提插揖揚換握揣揩揮援揶揺搜搭敝敞敢散敦敬斌斐斑斯晩普景晰晴晶智暁暃暎暑曾替最朝朞期棆棉棊棋棍棒棔棕棗棘棚棟棠棡棣棧森棯棲棹棺椀椁椄椅椈椋椌植椎椏椒椙椚検椡椢椣椥椦椨椪極欹欺欽款歯殕殖殘殼毯毳淵渙減渝渟渠渡渣渤渥渦温渫測渭港游渺渾湃湊湍湎湖湘湛湟湧湫湮湯湲湶湾湿満溂溌滋焙焚焜無焦焰然焼煮爲牋牌犀犂犇猥猩猯猴猶琥琲琳琴琵琶琺瑛瓠甥甦番畫畭畳畴疎疏痘痙痛痞痢痣痩登發皓皖皴盜着睇短硝硫硬硯硲硴禄稀稈程稍税窖窗窘竢竣童竦筅筆筈等筋筌筍筏筐筑筒答策筝筬粟粡粢粤粥粧粨粫粭紫絎絏結絖絞絡絢絣給絨絮統絲絳絵絶翔翕耋聒脹脾腆腋腑腓腔腕舒菟菰萩萪萬萱萵萸萼落葆葉葎葛葡葢董葩葫葬葭葮葯葱葵葷葹葺蒂蒄蛔蛙蛛蛞蛟蛤蛩蛬蛭蛮蛯衆街裁裂装裕裙補裡覃覗覘覚觝訴訶診註証詁詆詈詐詑詒詔評詛詞詠象貂貯貰貳貴買貸費貼貽貿賀賁赧趁超越跋跌跏跖跚跛距躰軫軸軻軼軽辜逵逶逹遂遅遇遊運遍過道達遥鄂酢酣酥釉量釿鈍鈎鈑鈔鈕鈞鈩鈬開閏閑間閔閖陽隅隈隊隋隍階随雁雄集雇雋雰雲靫靭靱韮項順須颪飯飲馭馮黃黍黑黹|13:亂亶傑催傭傲傳傴債傷傾僂僅僉働僧剽剿勠勢勣勦勧匯嗄嗅嗇嗔嗚嗜嗟嗣嗤嘆嘩園圓塊塋塑塒塗塘塙塞塡塢塩填塰墓壼夢奧奨媼媽媾嫁嫉嫋嫌嫐寛寝寞尠嵩嵬嵯嵳嵶幌幎幕幹廈廉彁彙徭微想惷愁愆愈愍意愚愛感愧愴愼愽愾慄慈慊慍慎慨戡戦搆損搏搓搖搗搦搨搬搶携搾摂摸数斟新旒暄暇暈暉暖暗暘會棄椰椴椶椹椽椿楊楓楔楕楙楚楜楝楞楠楡楢楪楫業楮楯楳楴楷楸楹楼楽楾榁歃歇歳殿毀溏源準溘溜溝溟溢溥溪溯溲溶溷溺溽滂滄滅滉滑滓滔滝滞漠漢煉煌煎煖煙煢煤煥煦照煩煬爺牒献猷猾猿獅獏琿瑁瑕瑙瑚瑜瑞瑟瑶甞當畷畸痰痲痳痴痺痼痾痿瘁皙盞盟睚睛睡督睥睦睨睫矮硼碁碆碇碌碍碎碓碕碗碚祺祿禀禁禅禍禎福禽稔稗稘稙稚稜稟稠窟筥筧筮筰筱筴筵筺節粮粱粲粳糀絛絹絽綉綏經継続綛綟罧罨罩罪罫置署羣群羨義耡聖聘肄肅肆腎腟腥腦腫腮腰腱腴腸腹腺舅與舜艀艇葦蒋蒐蒔蒙蒜蒟蒡蒭蒲蒸蒹蒻蒼蒿蓁蓄蓆蓉蓊蓋蓍蓐蓑蓖蓙蓚蓮虜虞號蛸蛹蛻蛾蜀蜂蜃蜆蜈蜉蜊蜍蜑蜒衙裏裔裘裝裟裨裲裸裼裾褂褄褐觚觜解触觧詢詣試詩詫詬詭詮詰話該詳詼誂誄誅誇誉誠豊豢貅貉貊貲賂賃賄資賈賊賍賎跟跡跣跨跪跫路跳践躱軾較輅載輊輌辞辟農逼逾遁遉遏遐遑遒違遖遠遣鄒酩酪酬鈴鈷鈿鉄鉅鉈鉉鉋鉐鉗鉚鉛鉞鉢鉤鉦鉱閘閙閠隔隕隗隘隙雅雉雍雎零雷雹電靖靴靹韵頌頏預頑頒頓飩飫飭飮飼飽飾馳馴骭髢鳧鳩鳫鳰麁黽鼎鼓鼠鈴零|14:僊像僑僕僖僚僞僣僥僭僮儁兢冩劃匱厩厭厮厰嗷嗹嗽嗾嘉嘔嘖嘗嘘嘛圖團塲塵塹塾境墅増墨壽夐夥奩奪奬嫖嫗嫡嫣嫦嫩孵察寡寢寤寥實寧寨對層嶂嶄嶇嶋嶌幔幗廏廐廓廖彰徳徴愨愬愿慂慇態慓慕慘慚慝慟慢慣慥慯慱慴慵慷憎截搴摎摑摘摧摶摺敲斡旗暝暢暦暮曄概榊榎榑榔榕榛榜榠榧榮榱榲榴榻榾榿槁槃槇槊構槌槍槎槐槓様槙槝槞模樮樺歉歌歴殞毓滌滬滯滲滴滷滸滾滿漁漂漆漉漏漓演漕漣漫漬漱漲漸漾潅煕煽熄熊熏熔熕爾犒犖獄瑠瑣瑤瑪瑯瑰瑳甃甄甅疑瘉瘋瘍瘧皷皸皹盡睹睾睿碑碣碧碩碪碯碵磁禊種稱稲穀窩窪竪竭端竰箆箇箋箍箏箒箔箕算箘箙箚箜箝箟管粹粽精綜綢綣綫綬維綮綯綰綱網綴綵綸綺綻綽綾綿緇緋総緑緒緕練罰翠翡聚聞聟聡聢肇腐腿膀膂膃膈膊膏膜臺蓬蓴蓼蓿蔀蔆蔑蔓蔔蔕蔗蔘蔚蔟蔡蔣蔦蔭蜘蜚蜜蜥蜩蜴蜷蜻蜿蝋裳裴裹製複褊褌褓褝覡誌認誑誓誘誚語誡誣誤誥誦誨説読豪貌貍賑赫趙跼跿踈踉踊輒輓輔輕辣遘遙遜遞遡適遭遮鄙酲酳酵酷酸鉾銀銃銅銑銓銕銖銘銚銛銜銭鋩関閣閤閥閧閨際障隠雌雑需静靤靺靼鞁鞄鞅鞆韶頗領頚颯颱飴馼駁駄駅駆骰髣髦髪魁魂鳳鳴鳶麼鼻齊領|15:僵價僻儀儂億儉儚冪凛凜劇劈劉劍勲匳嘱嘲嘶嘸噂噌噎噐噓噛器噴墜墟墫墮墳墸墹嫺嫻嬉嬋嬌審寫寮導履嶐嶝嶢幟幡幢幣幤廚廛廝廟廠廡廢廣弊彈影徹慙慧慫慮慰慳慶慾憂憇憔憚憤憧憫憬憮戮戯摩摯撃撈撒撓撕撚撞撤撥撩撫播撮撰撲撹敵敷數暫暴槧槨槫槭槲槹槻槽槿樂樅樊樋樌樒樓樔樗標樛樞樟樢樣権横歎歐歓殤毅毆滕漑漿潁潔潘潛潜潟潤潦潭潮潯潰潴潸潺潼澁澂澄澆澎澑澗濆熈熙熟熨熬熱獎獗瑩瑾璃璋甍畿瘟瘠瘡瘢瘤皚皺監盤瞋瞎瞑確碼碾磅磆磊磋磐磑禝稷稻稼稽稾稿穂穃窮窯窰箪箭箱箴箸篁範篆篇篋篌篏糂糅糊糎緊緘線緜緝緞締緡緤編緩緬緲縁縄縅罵罷罸羮羯翦翩翫聨膓膕膚膝膠膣膤膵臧舖舗舞蔬蔵蔽蕀蕁蕃蕈蕉蕊蕋蕎蕕蕘蕚蕣蕨蕩蕪蝉蝌蝎蝓蝕蝗蝙蝟蝠蝣蝦蝨蝪蝮蝴蝶蝸蝿蟒衝褒褞褥褪褫誕誰課誹誼調諂諄談請諌諍諏諒論諚諛諸諾謁豌貎賓賚賛賜賞賠賣賤賦質趣踏踐踝踞踟踪輙輛輜輝輟輦輩輪遨遯遵遷選遺遼鄭鄰鄲醂醇醉醋銷銹鋏鋒鋤鋪鋭鋲鋳錵錺閭閲霄霆震霈霊靠鞋鞍鞏鞐頡頬餃餅餉養餌餓駈駐駑駒駕駘駛駝駟髫髮髯髱髴鬧魃魄魅魯魴鴃鴆鴇鴈鴉鴎麩麪麹麾黎黙齒|16:儒儔儕儘冀凝劑劒劔勳勵叡嘯嘴噤噪噫噬噸噺嚆圜墺墻墾壁壅壇壊壌奮嬖嬢學寰嶬嶮嶼廨廩彊彜徼憊憐憑憖憙憩憲憶憺憾懆懈懊懌懍懐戰撻撼擁擂擅擇操擒擔據整旙暸暹暼暾曁曇曉樫樵樶樸樹樽橄橅橇橈橋橘橙機橡橢橦橲橸檠歔歙殪殫澡澣澤澪澱澳澹激濁濂濃濛熹熾燃燈燉燎燒燔燕燗獣獨獪獲璞璢甌甎疂瘰瘴瘻盥盧瞞瞠磔磚磧磨磬穆積穎穏穐窶窺築篝篤篥篦篩篭簑糒糖糘糢緯緻縉縊縋縒縛縞縟縡縢縣縦縫繁罹羲翰耨膨膩膰膳臈臻興舉舘艘艙蕗蕭蕷蕾薀薄薇薈薊薐薑薔薗薙薛薜薤薦薨薪薫薬薮螂融螟螢蟆蟇衛衞衡褶褸襁覦覩親諜諞諠諡諢諤諦諧諫諭諮諳諷諺謀謂謔謡豎豫豬賢賭赭踰踴踵蹂蹄躾輯輳輸輹輻辧辨遲遶避邁還醍醐醒醗鋸鋺鋼錆錏錐錘錙錚錠錢錣錦錨錫錬錮錯録錻鍄閹閻閼閾隣隧隨險隷雕霍霎霏霑霓霖霙靜靦鞘頤頭頰頴頷頸頼頽餐餒餔餘餝館駢駭駮駱駲骸骼髭髷髻鬨鮃鮎鮑鮒鮓鮖鮗鴒鴕鴛鴟鴣鴦鴨鴪鴫鴬麈麭麺黔默黛龍龜|17:儖償儡優厳嚀嚇嚊嚏壑壓壕壗嬪嬬嬰嬲嬶孺嶷嶺嶽彌徽懃懇應懋懦戲戴擘擠擡擢擣擦擧擬擯擱斂曖曙曚朦橿檀檄檍檎檐檗檜檢檣檪檬歛歟氈澀濔濕濘濟濠濡濤濬濮濯濱濶燐營燠燥燦燧燬燭燮燵爵牆犠獰環瓢甑療癆癇癈癌癘盪瞥瞭瞰瞳瞶矯磯磴磽礁禦禧禪穉穗窿竃篠篳篶篷簀簇簍簒簓簔簗糜糞糟糠縮縱縲縵縷縹縺縻總績繃繆繊繋繍罅翳翼聯聰聲聳聴膸膺膽膾膿臀臂臆臉舊艚艝艱薩薯薹薺藁藉藐虧螫螯螳螺螻螽蟀蟄蟋蟐蠎褻襃襄襌襍覧覬覯諱謄謇謌謎謐謖謗謙謚講謝謠謨謹譁谿豁貔貘賺賻購賽趨蹇蹈蹉蹊蹌蹐輾輿轂轄轅遽邀邂邉醜醢醤鍋鍍鍔鍖鍛鍜鍠鍬鍮鍵鍼鍾闃闇闊闌闍隰隱隲隸雖霜霞鞜鞠頻顆颶餞餠餡餤馘駸駻駿騁鮟鮠鮨鮪鮫鮭鮮鮴鴻鴾鴿鵁鵄鵆鵈麋黏黜黝點黻鼾齋齔齢龠嶺|18:儲叢嚔嚠嚢壘壙彝懣懲懴戳擲擴擶擺擽擾攅斃斷旛曜檮檳檸櫁櫂櫃歸殯濫濺濾瀁瀆瀉瀋瀏瀑燹燻燼燿獵璧瓊甓甕癒癖癜瞬瞹瞻瞼瞽瞿矇礇礎礑礒禮穡穢穣穫竄竅簞簟簡簣簧糧織繕繖繙繚繝繞繦繧繭羂羃翹翻聶職臍臑臨艟藍藏藕藜藝藤藥藩藪蟠蟬蟯蟲襖襟襠覆覲観觴謦謫謬謳謾豐贄贅贈蹕蹙蹟蹠蹣蹤轆轉轌邃邇醪醫醬釐鎌鎔鎖鎗鎚鎧鎬鎭鎮鎰鎹闔闕闖闘雙雛雜難霤鞣鞦鞨鞫鞭鞳韓顋題額顎顏顔顕類餬餮馥騅騎騏騒験髀鬆鬩魍魎魏鮹鯀鯆鯉鯊鯏鯑鯒鵐鵑鵙鵜鵝鵞鵠鵤麌麿黠鼕鼬|19:勸嚥嚮壜壞壟嬾寳寵廬懶懷攀曝曠檻櫑櫓櫚櫛櫞櫟殱濳瀕瀘瀚瀛瀝瀞瀟瀦瀧瀬爆爍牘犢獸獺璽疆疇癡礙礪禰禱穩簫簷簸簽簾簿籀繡繩繪繫繰繹羅羆羶羸羹臓臘艢艤艨艶藷藹藺藻藾蘂蘆蘇蘊蘋蘓蘢蘭蟶蟷蟹蟻蟾蠅蠍蠏蠖襞襦襪覇覈證譌譎譏譖識譚譛譜警贇贊贋蹲蹴蹶蹼躇軅轍轎辭邊醯鏃鏈鏐鏑鏖鏘鏝鏡鏤鏥鏨關隴離霧霪靡鞴韲韻願顚顛餽餾饂騙騨髄鯔鯖鯛鯡鯢鯣鯤鯨鯰鯱鯲鯵鵡鵬鵯鵲鵺鶇鶉鶏鹸麑麒麓麕麗黼𧒑|20:嚴嚶壤壥孀孃孅寶巉巌廰懸懺懽攘曦朧櫨櫪欄瀰瀲瀾灌爐犧獻瓏瓣癢矍礦礫礬竇競簪籌籍籏糯糲繻繼繽纂纃罌耀聹臙臚蘖蘗蘚蘯蘰蠑蠕蠣襤襭覺觸譟譫譬譯議譱譲護譽贍贏躁躄躅軆轗辮醴醵醸釋鏗鐃鐇鐐鐓鐔鐘鐙鐚鐡鐫闡霰韜響飃飄饅饉馨騫騰騷驀鬪鰄鰆鰈鰉鰊鰌鰍鰐鰒鰓鰔鰕鰛鶚鶤鶩鶫鹹黥黨齟齠齡齣|21:儷儺嚼囀囁囂囃囈屬巍廱懼懾攜攝曩櫺櫻欅權歡殲爛瓔癧癨癩癪竈籃籐籔籖繿纈纉續纎纏纐罍艦艪蠡蠢襯譴贐贔躊躋躍轜轟辯醺鐵鐶鐸鐺鑁闢闥露霸霹顧飆飜饋饌饐饑饒騾驂驃驅髏鬘魑魔鰡鰤鰥鰭鰮鰯鰰鶯鶲鶴鶸鶺鶻鷁鷂鷄鷆鷏麝黯齎齦齧龝|22:儻儼囎巒巓彎懿攤灑灘疉疊癬禳穰竊竸籘籟籠糴纒罎羇聽聾臟艫蘿蠧襲襴襷覽覿讀讃贓贖躑躓躔轡轢鑄鑓霽霾韃顫饕饗驍驕驚鬚鬻鰲鰺鰻鰾鱆鱇鱈鷓鷗鷙齪齬龕|23:巖戀攣攪攫欒癰籤籥纓纔纖罐蠱變讌讎讐躙轣轤邏鑑鑒鑚鑛鑞鑠鑢靨韈顯驗驛髑髓體髞鬟鰹鱒鱚鷦鷭鷯鷲鷸黐黴齏|24:囑囓癲矗纛羈艷蠹衢觀讒讓讖讙軈釀鑪靂靄靆靈韆顰驟鬢魘鱗鱠鱧鷹鷺鷽麟鼇齲齶齷|25:廳攬欝灣籬糶臠蠻覊躡釁鑰鑵靉顱鬣鹽黌鼈|26:欖矚蠶讚躪鑷顴驢驥鬮鱶黶|27:鑼鑽鑾顳驤驩鱸黷|28:欟纜鑿钁鸚鸛|29:爨驪鬱|30:驫鸞'.split('|').forEach(t=>{const i=t.indexOf(':'),n=+t.slice(0,i);for(const c of t.slice(i+1))STK[c]=n});
+const strokes=ch=>STK[ch]||1;
 const W=360,H=540,PY=430,$=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
-let mode='single',deck=[],sel=[],eng,pieces=[],cur=0,curCh='',px=W/2,phase='idle',fr=0,still=0,camY=0,camT=0,running=false,n=0,h=0,best=0,round=0,me=0,opp=null,R=null,started=false;
-try{best=parseFloat(localStorage.getItem('mb-best'))||0}catch(e){}
+let mode='single',deck=[],sel=[],eng,pieces=[],cur=0,curCh='',px=W/2,ang=0,phase='idle',fr=0,still=0,camY=0,camT=0,running=false,n=0,h=0,best=0,sc=0,bestS=0,round=0,me=0,opp=null,R=null,started=false;
+try{best=parseFloat(localStorage.getItem('mb-best'))||0;bestS=parseFloat(localStorage.getItem('mb-best-s'))||0}catch(e){}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const mine=()=>mode==='single'||cur===me;
+let tStart=0,lastSec=-1;const TL=15,remain=()=>Math.max(0,Math.ceil(TL-(Date.now()-tStart)/1000));
+const mine=()=>mode!=='online'||cur===me;
 function graphemes(t){return window.Intl&&Intl.Segmenter?Array.from(new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(t),x=>x.segment):Array.from(t)}
 
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));running=(id==='game')}
 function refreshDeck(){
  [...$('grid').children].forEach(c=>c.classList.toggle('sel',sel.includes(c.textContent)));
  const p=$('pick');p.innerHTML='';
- sel.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.className='pri';b.style.cssText='min-width:0;font-size:44px;padding:4px 16px';b.onclick=()=>{sel.splice(sel.indexOf(k),1);refreshDeck()};p.appendChild(b)});
+ sel.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.className='pri';if(mode==='stroke'){const sm=document.createElement('small');sm.style.cssText='font-size:14px;margin-left:4px';sm.textContent=strokes(k)+'画';b.appendChild(sm)}b.style.cssText='min-width:0;font-size:44px;padding:4px 16px';b.onclick=()=>{sel.splice(sel.indexOf(k),1);refreshDeck()};p.appendChild(b)});
  $('dnext').disabled=sel.length!==3}
 function addK(k){const m=$('kmsg');
  if(!k||/^\s$/u.test(k)||shape(k).empty){m.textContent='表示できる文字を1つ入力してください';return false}
  if(sel.includes(k)){m.textContent='同じ文字は選べません';return false}
  if(sel.length>=3){m.textContent='3つまでです。選んだ文字をタップで外せます';return false}
  m.textContent='';sel.push(k);refreshDeck();return true}
-function deckScreen(m){mode=m;sel=deck.slice();$('dtitle').textContent='デッキ編成';
- $('dnext').textContent=m==='single'?'スタート':'対戦相手を探す';
+function deckScreen(m){mode=m;sel=deck.slice();$('dtitle').textContent='デッキ編成'+(m==='stroke'?'：画数が多いほど高得点（絵文字・記号は1点）':'');
+ $('dnext').textContent=m!=='online'?'スタート':'対戦相手を探す';
  const g=$('grid');g.innerHTML='';$('kmsg').textContent='';$('kin').value='';
  ALL.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{
   if(sel.includes(k)){sel.splice(sel.indexOf(k),1);$('kmsg').textContent='';refreshDeck()}else addK(k)};g.appendChild(b)});
@@ -104,29 +140,31 @@ function addInput(){const a=graphemes($('kin').value.trim());
  if(addK(a[0]))$('kin').value=''}
 $('kadd').onclick=addInput;$('kin').addEventListener('keydown',e=>{if(e.key==='Enter')addInput()});
 $('single').onclick=()=>deckScreen('single');
+$('stroke').onclick=()=>deckScreen('stroke');
 $('online').onclick=()=>deckScreen('online');
 $('dback').onclick=toTitle;$('totitle').onclick=toTitle;
 $('mcancel').onclick=toTitle;
-$('redeck').onclick=()=>{leaveOnline();deckScreen('single')};
-$('dnext').onclick=()=>{deck=sel.slice();if(mode==='single'){me=0;startGame()}else findMatch()};
+$('redeck').onclick=()=>{const m=mode==='stroke'?'stroke':'single';leaveOnline();deckScreen(m)};
+$('dnext').onclick=()=>{deck=sel.slice();if(mode!=='online'){me=0;startGame()}else findMatch()};
 $('again').onclick=()=>{
- if(mode==='single'){startGame();return}
+ if(mode!=='online'){startGame();return}
  if(R){R.presence({again:round+1});$('again').disabled=true;$('rs').textContent+='　相手を待っています…'}};
 function toTitle(){leaveOnline();phase='idle';show('title')}
 function leaveOnline(){searching=false;if(R){R.leave().catch(()=>{});R=null}closeNet();started=false;round=0}
 
 // ---- 当たり判定: 字形をラスタライズして矩形に分解（任意の文字に対応） ----
-const FONT='bold 72px "Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif';
+const FONT='bold 72px "Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans JP","Noto Sans CJK JP",sans-serif';
+const SKY='#2f9bff',CORAL='#ff5c7a',PAL=['#ff5c7a','#2f9bff','#2fc27a','#ffa51f','#9b6bff'];
 const RC={};
 function shape(ch){
  if(RC[ch])return RC[ch];
  const N=96,C=4,nn=N/C,c=document.createElement('canvas');c.width=c.height=N;
  const g=c.getContext('2d',{willReadFrequently:true});
- g.font=FONT;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText(ch,N/2,N/2);
+ g.font=FONT;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText(ch,N/2,N/2);g.strokeStyle='#000';g.lineWidth=2;g.lineJoin='round';g.strokeText(ch,N/2,N/2);
  const d=g.getImageData(0,0,N,N).data,out=[];let prev={};
  // 内側の穴（口・田など）は外から届かない空きセルを塗りつぶして、外周だけの中身が詰まった形にする
  const G=[];
- for(let r=0;r<nn;r++){const row=[];for(let q=0;q<nn;q++){let a=0;for(let y=0;y<C;y++)for(let x=0;x<C;x++)a+=d[((r*C+y)*N+q*C+x)*4+3];row.push(a/(C*C*255)>.4)}G.push(row)}
+ for(let r=0;r<nn;r++){const row=[];for(let q=0;q<nn;q++){let a=0;for(let y=0;y<C;y++)for(let x=0;x<C;x++)a+=d[((r*C+y)*N+q*C+x)*4+3];row.push(a/(C*C*255)>.25)}G.push(row)}
  const ext=G.map(r=>r.map(()=>false)),st=[];
  for(let i=0;i<nn;i++)for(const [r,q] of [[0,i],[nn-1,i],[i,0],[i,nn-1]])if(!G[r][q]&&!ext[r][q]){ext[r][q]=true;st.push([r,q])}
  while(st.length){const [r,q]=st.pop();for(const [dr,dq] of [[1,0],[-1,0],[0,1],[0,-1]]){const y=r+dr,x=q+dq;if(y>=0&&x>=0&&y<nn&&x<nn&&!G[y][x]&&!ext[y][x]){ext[y][x]=true;st.push([y,x])}}}
@@ -146,31 +184,39 @@ function shape(ch){
  return RC[ch]}
 function make(ch){
  const ps=shape(ch).map(([x,y,w,h])=>Bodies.rectangle(x,y,w+1,h+1,{friction:.8,frictionStatic:1,restitution:0,slop:.02}));
- const b=Body.create({parts:ps,frictionAir:.02,sleepThreshold:30});
+ // 矩形が1つだけの字（■・一・穴埋め後の口など）は、Body.createのparts指定だと既定の40x40の箱になってしまうので、その矩形自体を本体にする
+ const b=ps.length>1?Body.create({parts:ps,frictionAir:.02,sleepThreshold:30}):ps[0];
+ if(ps.length===1)Body.set(b,{frictionAir:.02,sleepThreshold:30});
  return {b,off:{x:-b.position.x,y:-b.position.y},ch}}
-function addPiece(o,ch,x,y){const p=make(ch);p.owner=o;
- Body.setPosition(p.b,{x:x-p.off.x,y:y-p.off.y});Composite.add(eng.world,p.b);pieces.push(p)}
+function addPiece(o,ch,x,y,a){a=a||0;const p=make(ch);p.owner=o;
+ const cs=Math.cos(a),sn=Math.sin(a);
+ Body.setAngle(p.b,a);Body.setPosition(p.b,{x:x-(p.off.x*cs-p.off.y*sn),y:y-(p.off.x*sn+p.off.y*cs)});Composite.add(eng.world,p.b);pieces.push(p)}
 
 // ---- ゲーム進行 ----
 function startGame(){
  show('game');
  eng=Engine.create({positionIterations:14,velocityIterations:10,enableSleeping:true});eng.gravity.y=1;
  Composite.add(eng.world,Bodies.rectangle(W/2,PY+50,180,100,{isStatic:true,friction:.9}));
- pieces=[];n=0;h=0;camY=0;camT=0;phase='ready';px=W/2;cur=mode==='online'?round%2:0;
+ queue=[];fillQ();sc=0;pieces=[];n=0;h=0;camY=0;camT=0;phase='ready';px=W/2;cur=mode==='online'?round%2:0;
  $('res').classList.remove('on');$('again').disabled=false;
  updBars();
  const ov=$('ov');ov.textContent='READY';ov.classList.add('on');
  setTimeout(()=>{ov.textContent='GO!';setTimeout(()=>{ov.classList.remove('on');beginTurn()},600)},900)}
+// テトリス式: デッキを袋にして混ぜ、使い切るまで1回ずつ出す。次に来る文字(NEXT)も見える
+let queue=[];
+function fillQ(){while(queue.length<2){const b=deck.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}queue.push(...b)}}
+function takeNext(){fillQ();const c=queue.shift();fillQ();return c}
 function beginTurn(){
  let top=PY;pieces.forEach(p=>{top=Math.min(top,p.b.bounds.min.y)});
  camT=Math.max(0,230-top);h=Math.max(0,(PY-top)/10);
- fr=0;still=0;px=W/2;
- if(mine()){curCh=deck[Math.floor(Math.random()*deck.length)];phase='aim';if(R)R.presence({ch:curCh,ax:px,t:n}).catch(()=>{})}
+ fr=0;still=0;px=W/2;ang=0;tStart=Date.now();lastSec=-1;
+ if(mine()){curCh=takeNext();phase='aim';if(R)R.presence({ch:curCh,ax:px,ang:0,t:n}).catch(()=>{})}
  else{phase='wait';curCh=''}
  updBars()}
 function updBars(){
+ $('rl').disabled=$('rr').disabled=phase!=='aim';
  const on=mode==='online',b1=$('b1'),b2=$('b2'),m=mine();
- b1.querySelector('b').textContent=on?'相手':'高さ '+h.toFixed(1)+'cm（最高 '+best.toFixed(1)+'）';
+ b1.querySelector('b').textContent=on?'相手':mode==='stroke'?'画数 '+sc+'（最高 '+bestS+'）':'高さ '+h.toFixed(1)+'cm（最高 '+best.toFixed(1)+'）';
  b2.querySelector('b').textContent=on?'あなた':'';
  b1.style.color=on?'var(--p2)':'var(--ink)';
  const live=phase==='aim'||phase==='drop'||phase==='wait';
@@ -178,8 +224,9 @@ function updBars(){
  b2.classList.toggle('act',m&&live);
  b1.querySelector('.k').textContent=on&&!m?curCh:'';
  b2.querySelector('.k').textContent=m?curCh:'';
- b1.querySelector('.t').textContent=on&&!m?(phase==='drop'?'落下中…':'相手の番'):'';
- b2.querySelector('.t').textContent=m?(phase==='aim'?'あなたの番':phase==='drop'?'落下中…':''):''}
+ b1.querySelector('.t').textContent=on&&!m?(phase==='drop'?'落下中…':'相手の番（'+remain()+'秒）'):'';
+ b2.querySelector('.nx').textContent=queue[0]&&phase!=='over'?'NEXT '+queue[0]:'';
+ b2.querySelector('.t').textContent=m?(phase==='aim'?'あなたの番'+(on?'（'+remain()+'秒）':''):phase==='drop'?'落下中…':''):''}
 
 function xOf(e){const r=cv.getBoundingClientRect();return clamp((e.clientX-r.left)/r.width*W,40,W-40)}
 let down=false;
@@ -187,23 +234,37 @@ cv.addEventListener('pointerdown',e=>{if(phase!=='aim')return;down=true;cv.setPo
 cv.addEventListener('pointermove',e=>{if(phase==='aim'&&down){px=xOf(e);if(R)R.presence({ax:px}).catch(()=>{})}});
 cv.addEventListener('pointerup',e=>{if(phase!=='aim'||!down)return;down=false;px=xOf(e);drop()});
 cv.addEventListener('pointercancel',()=>down=false);
+function rot(d){if(phase!=='aim')return;ang=Math.round((ang+d)*1000)/1000;if(ang>Math.PI)ang-=2*Math.PI;if(ang<-Math.PI)ang+=2*Math.PI;if(R)R.presence({ang}).catch(()=>{})}
+// 長押しで回転（2秒で1周 = 毎ステップ π/60）
+let rotDir=0,rc=0;
+function spin(d){ang+=d;if(ang>Math.PI)ang-=2*Math.PI;if(ang<-Math.PI)ang+=2*Math.PI}
+function holdBtn(id,dir){const b=$(id);
+ b.addEventListener('pointerdown',e=>{e.preventDefault();if(phase!=='aim')return;rotDir=dir;try{b.setPointerCapture(e.pointerId)}catch(_){}});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(t=>b.addEventListener(t,()=>{if(rotDir===dir){rotDir=0;if(R)R.presence({ang}).catch(()=>{})}}));
+ b.addEventListener('contextmenu',e=>e.preventDefault())}
+holdBtn('rl',-1);holdBtn('rr',1);
+document.addEventListener('keydown',e=>{if(e.target&&e.target.tagName==='INPUT'||e.repeat)return;
+ const k=e.key.toLowerCase();if(k==='q')rotDir=-1;else if(k==='e')rotDir=1;else if(k==='r')rot(Math.PI/2)});
+document.addEventListener('keyup',e=>{const k=e.key.toLowerCase();if((k==='q'&&rotDir===-1)||(k==='e'&&rotDir===1))rotDir=0});
 function drop(){
- const y=100-camY;addPiece(cur,curCh,px,y);phase='drop';fr=0;still=0;
- if(R)R.emit('drop',{n,x:Math.round(px*10)/10,y:Math.round(y*10)/10,ch:curCh}).catch(()=>{});
+ const y=100-camY;addPiece(cur,curCh,px,y,ang);phase='drop';fr=0;still=0;
+ if(R)R.emit('drop',{n,x:Math.round(px*10)/10,y:Math.round(y*10)/10,a:Math.round(ang*1000)/1000,ch:curCh}).catch(()=>{});
  updBars()}
 function nextTurn(){
  if(R){const s=pieces.map(p=>[Math.round(p.b.position.x*10),Math.round(p.b.position.y*10),Math.round(p.b.angle*1000)]);
   R.emit('settle',{n,s}).catch(()=>R&&R.emit('settle',{n}).catch(()=>{}))}
+ if(mode==='stroke'&&pieces.length)sc+=strokes(pieces[pieces.length-1].ch);
  cur=mode==='online'?1-cur:0;n++;beginTurn()}
 function fail(){
  if(R)R.emit('end',{l:me}).catch(()=>{});
  finish(mode==='online'?me:0)}
 function finish(loser,note){
  if(phase==='over')return;phase='over';updBars();
- if(mode==='single'){
-  const nb=h>best;if(nb){best=h;try{localStorage.setItem('mb-best',String(h))}catch(e){}}
+ if(mode!=='online'){
+  const st=mode==='stroke',v=st?sc:h,nb=v>(st?bestS:best);
+  if(nb){if(st)bestS=v;else best=v;try{localStorage.setItem(st?'mb-best-s':'mb-best',String(v))}catch(e){}}
   $('rt').textContent='GAME OVER';$('rt').style.color='var(--ink)';
-  $('rs').textContent='高さ '+h.toFixed(1)+'cm　最高 '+best.toFixed(1)+'cm'+(nb&&h>0?'（新記録！）':'');
+  $('rs').textContent=st?'画数スコア '+sc+'　最高 '+bestS+(nb&&sc>0?'（新記録！）':''):'高さ '+h.toFixed(1)+'cm　最高 '+best.toFixed(1)+'cm'+(nb&&h>0?'（新記録！）':'');
   $('redeck').style.display='';
  }else{
   const win=loser!==me;
@@ -247,7 +308,7 @@ function guest(k){
  g.on('error',e=>{if(!searching)return;if(e.type==='peer-unavailable'){clearTimeout(net.t);next()}else netErr(e)})}
 // game側が使う room 風API（emit/on/presence/peers/onPeers/leave）を DataConnection 上に実装
 function makeRoom(c,myId){
- const hs={},pc=[],mp={},tp={},OK=['st','ch','ax','t','again'];let here=true;
+ const hs={},pc=[],mp={},tp={},OK=['st','ch','ax','ang','t','again'];let here=true;
  const snap=()=>{const a=[{sameTab:true,isMe:true,kind:'viewer',peer:myId,presence:{...mp}}];
   if(here)a.push({sameTab:false,isMe:false,kind:'viewer',peer:c.peer,presence:{...tp}});return a};
  const fire=l=>pc.forEach(f=>f({peers:snap(),joined:[],left:l,updated:[]}));
@@ -280,7 +341,7 @@ function onDrop(m){
  if(m.isMe||mine()||phase==='over')return;
  const d=m.data||{};
  if(typeof d.x!=='number'||typeof d.y!=='number'||typeof d.ch!=='string'||graphemes(d.ch).length!==1)return;
- addPiece(cur,d.ch,clamp(d.x,0,W),clamp(d.y,-2000,H));phase='drop';fr=0;still=0;updBars()}
+ addPiece(cur,d.ch,clamp(d.x,0,W),clamp(d.y,-2000,H),typeof d.a==='number'?clamp(d.a,-7,7):0);phase='drop';fr=0;still=0;updBars()}
 function onSettle(m){
  if(m.isMe||mine()||phase==='over')return;
  const s=(m.data||{}).s;
@@ -303,6 +364,8 @@ function step(){
    const mv=pieces.some(p=>p.b.speed>.125||Math.abs(p.b.angularSpeed)>.006);
    still=mv?0:still+1;
    if((fr>40&&still>30)||fr>900)nextTurn()}}
+ if(phase==='aim'&&rotDir){spin(rotDir*Math.PI/60);if(R&&++rc%3===0)R.presence({ang}).catch(()=>{})}else if(phase!=='aim')rotDir=0;
+ if(mode==='online'&&phase==='aim'&&Date.now()-tStart>=TL*1000){down=false;drop()}
  if(phase==='aim'||phase==='wait')camY+=(camT-camY)*.06}
 
 function draw(){
@@ -313,24 +376,28 @@ function draw(){
  const ink=getComputedStyle(document.body).color,self=mode==='online'?me:0;
  cx.clearRect(0,0,W,H);
  cx.save();cx.translate(0,camY);
- cx.fillStyle=ink;cx.fillRect(W/2-90,PY,180,20);
- cx.strokeStyle='#c0392b';cx.setLineDash([6,6]);cx.beginPath();cx.moveTo(0,PY+90);cx.lineTo(W,PY+90);cx.stroke();cx.setLineDash([]);
+ cx.fillStyle='#b9794d';cx.fillRect(W/2-90,PY,180,20);cx.fillStyle='#4cc66b';cx.fillRect(W/2-90,PY,180,7);
+ cx.strokeStyle='#ff5c7a';cx.setLineDash([6,6]);cx.beginPath();cx.moveTo(0,PY+90);cx.lineTo(W,PY+90);cx.stroke();cx.setLineDash([]);
  cx.font=FONT;cx.textAlign='center';cx.textBaseline='middle';
- pieces.forEach(p=>{cx.save();cx.translate(p.b.position.x,p.b.position.y);cx.rotate(p.b.angle);
-  cx.fillStyle=p.owner===self?'#2c6e9b':'#c0392b';cx.fillText(p.ch,p.off.x,p.off.y);cx.restore()});
+ pieces.forEach((p,i)=>{cx.save();cx.translate(p.b.position.x,p.b.position.y);cx.rotate(p.b.angle);
+  cx.fillStyle=mode==='online'?(p.owner===self?SKY:CORAL):PAL[i%PAL.length];cx.strokeStyle=cx.fillStyle;cx.lineWidth=2;cx.lineJoin='round';cx.strokeText(p.ch,p.off.x,p.off.y);cx.fillText(p.ch,p.off.x,p.off.y);cx.restore()});
  // 単独モード: 現在の高さの目安線
- if(mode==='single'&&h>0){cx.strokeStyle='rgba(44,110,155,.5)';cx.setLineDash([3,5]);cx.beginPath();cx.moveTo(0,PY-h*10);cx.lineTo(W,PY-h*10);cx.stroke();cx.setLineDash([])}
+ if(mode==='single'&&h>0){cx.strokeStyle='rgba(47,155,255,.6)';cx.setLineDash([3,5]);cx.beginPath();cx.moveTo(0,PY-h*10);cx.lineTo(W,PY-h*10);cx.stroke();cx.setLineDash([])}
  cx.restore();
  cx.font=FONT;cx.textAlign='center';cx.textBaseline='middle';
  if(phase==='aim'){
   cx.strokeStyle='rgba(128,128,128,.5)';cx.setLineDash([4,6]);cx.beginPath();cx.moveTo(px,130);cx.lineTo(px,PY);cx.stroke();cx.setLineDash([]);
-  cx.fillStyle='#2c6e9b';cx.fillText(curCh,px,100);
-  cx.fillStyle='#888';cx.font='13px sans-serif';cx.fillText('ドラッグで位置を決めて、離すと落下',W/2,22)}
+  cx.fillStyle=mode==='online'?SKY:PAL[pieces.length%PAL.length];cx.save();cx.translate(px,100);cx.rotate(ang);cx.fillText(curCh,0,0);cx.restore();
+  cx.fillStyle='#7b6a8f';cx.font='bold 13px sans-serif';cx.fillText('ドラッグで位置、↺↻長押しで回転、離すと落下',W/2,22)}
  if(phase==='wait'&&R){
   const o=R.peers().find(p=>!p.sameTab&&p.peer===opp),pr=o&&o.presence;
   if(pr&&pr.t===n&&typeof pr.ax==='number'&&typeof pr.ch==='string'&&graphemes(pr.ch).length===1){
    if(curCh!==pr.ch){curCh=pr.ch;updBars()}
-   cx.globalAlpha=.55;cx.fillStyle='#c0392b';cx.fillText(pr.ch,clamp(pr.ax,40,W-40),100);cx.globalAlpha=1}}}
+   cx.globalAlpha=.55;cx.fillStyle=CORAL;cx.save();cx.translate(clamp(pr.ax,40,W-40),100);cx.rotate(typeof pr.ang==='number'?pr.ang:0);cx.fillText(pr.ch,0,0);cx.restore();cx.globalAlpha=1}}
+ if(mode==='online'&&(phase==='aim'||phase==='wait')){
+  const rem=remain();cx.save();cx.font='bold 20px sans-serif';cx.textAlign='right';cx.fillStyle=rem<=5?'#ff3b5c':'#7b6a8f';cx.fillText(rem+'s',W-12,24);cx.restore();
+  if(rem!==lastSec){lastSec=rem;updBars()}}
+}
 
 let last=0,acc=0;
 function loop(t){
